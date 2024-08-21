@@ -80,16 +80,44 @@
 <body>
     <div class="container">
         <h1>Sube tu foto o video</h1>
-        <form id="uploadForm" method="POST" enctype="multipart/form-data" action="upload.php">
-            <div class="file-input-container">
-                <label class="custom-file-button" for="fileInput">Selecciona un archivo</label>
-                <input type="file" id="fileInput" name="files[]" accept="image/*,video/*" multiple>
-            </div>
-            <button type="submit">Subir</button>
-        </form>
-        <div id="media-container">
-            <?php include 'display_uploads.php'; ?>
+        <div class="file-input-container">
+            <label class="custom-file-button" for="fileInput">Selecciona un archivo</label>
+            <input type="file" id="fileInput" accept="image/*,video/*" multiple>
         </div>
+        <div id="media-container"></div>
     </div>
+
+    <script>
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const files = event.target.files;
+            const mediaContainer = document.getElementById('media-container');
+
+            // Limpiar el contenedor de medios si es necesario
+            // mediaContainer.innerHTML = '';
+
+            Array.from(files).forEach(file => {
+                if (file) {
+                    const reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        if (file.type.startsWith('image/')) {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            mediaContainer.appendChild(img);
+                        } else if (file.type.startsWith('video/')) {
+                            const video = document.createElement('video');
+                            video.src = e.target.result;
+                            video.controls = true; // Agrega controles al video
+                            mediaContainer.appendChild(video);
+                        } else {
+                            alert('Tipo de archivo no soportado.');
+                        }
+                    };
+
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    </script>
 </body>
 </html>
